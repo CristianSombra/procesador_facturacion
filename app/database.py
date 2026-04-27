@@ -28,7 +28,6 @@ def crear_tabla():
         condicion_iva TEXT,
         domicilio TEXT,
         condicion_venta TEXT,
-        opcion_transferencia TEXT,
         periodo TEXT,
         importe_total NUMERIC,
         cae TEXT
@@ -56,11 +55,10 @@ def guardar_factura(datos):
             condicion_iva,
             domicilio,
             condicion_venta,
-            opcion_transferencia,
             periodo,
             importe_total,
             cae
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             datos.get("tipo_factura"),
             datos.get("numero_factura"),
@@ -71,7 +69,6 @@ def guardar_factura(datos):
             datos.get("condicion_iva"),
             datos.get("domicilio"),
             datos.get("condicion_venta"),
-            datos.get("opcion_transferencia"),
             datos.get("periodo"),
             datos.get("importe_total"),
             datos.get("cae")
