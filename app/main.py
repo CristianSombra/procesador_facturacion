@@ -3,6 +3,18 @@ from extractor import extraer_datos_factura
 from database import guardar_factura, crear_tabla
 
 
+def procesar_archivo(ruta_pdf):
+    crear_tabla()
+
+    nombre_archivo = os.path.basename(ruta_pdf)
+    print(f"Procesando: {nombre_archivo}")
+
+    datos = extraer_datos_factura(ruta_pdf)
+    guardar_factura(datos)
+
+    return datos
+
+
 def main():
     crear_tabla()
 
@@ -15,10 +27,7 @@ def main():
 
     for archivo in archivos:
         ruta_pdf = os.path.join(carpeta_pdfs, archivo)
-        print(f"Procesando: {archivo}")
-
-        datos = extraer_datos_factura(ruta_pdf)
-        guardar_factura(datos)
+        procesar_archivo(ruta_pdf)
 
     print("Proceso terminado.")
 
