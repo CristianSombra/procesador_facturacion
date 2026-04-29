@@ -29,7 +29,7 @@ def main():
         ruta_pdf = os.path.join(carpeta_pdfs, archivo)
         procesar_archivo(ruta_pdf)
 
-    print("Proceso terminado.")
+    print("Proceso terminado. ✅")
 
 
 if __name__ == "__main__":

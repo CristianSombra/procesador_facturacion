@@ -1,9 +1,10 @@
 from tkinterdnd2 import TkinterDnD, DND_FILES
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import threading
 import os
 from main import procesar_archivo
+from exportador import exportar_excel, exportar_pdf
 
 
 COLUMNAS = [
@@ -32,6 +33,24 @@ def agregar_fila(datos):
     tabla.insert("", "end", values=valores)
 
 
+def exportar_datos():
+    formato = formato_exportacion.get()
+
+    try:
+        if formato == "Excel":
+            exportar_excel()
+            agregar_log("Exportación Excel realizada.")
+        elif formato == "PDF":
+            exportar_pdf()
+            agregar_log("Exportación PDF realizada.")
+        else:
+            messagebox.showwarning("Atención", "Seleccioná un formato de exportación.")
+
+    except Exception as error:
+        agregar_log(f"ERROR al exportar: {error}")
+        messagebox.showerror("Error", f"No se pudo exportar:\n{error}")
+
+
 def procesar_archivos_en_segundo_plano(archivos):
     ventana.after(0, lambda: estado.config(text="Procesando archivos..."))
     ventana.after(0, lambda: agregar_log("Inicio del procesamiento"))
@@ -54,7 +73,7 @@ def procesar_archivos_en_segundo_plano(archivos):
             ventana.after(0, lambda n=nombre, e=error: agregar_log(f"ERROR en {n}: {e}"))
 
     ventana.after(0, lambda: estado.config(text="Proceso terminado"))
-    ventana.after(0, lambda: agregar_log("Proceso terminado"))
+    ventana.after(0, lambda: agregar_log("Proceso terminado ✅"))
 
 
 def soltar_archivos(evento):
@@ -69,7 +88,7 @@ def soltar_archivos(evento):
 
 
 def iniciar_interfaz():
-    global ventana, tabla, log, estado
+    global ventana, tabla, log, estado, formato_exportacion
 
     ventana = TkinterDnD.Tk()
     ventana.title("Procesador de Facturación PDF")
@@ -104,6 +123,34 @@ def iniciar_interfaz():
     )
     estado.pack(pady=5)
 
+    frame_exportar = tk.Frame(ventana)
+    frame_exportar.pack(pady=5)
+
+    tk.Label(
+        frame_exportar,
+        text="Exportar como:",
+        font=("Arial", 10)
+    ).pack(side="left", padx=5)
+
+    formato_exportacion = tk.StringVar(value="Excel")
+
+    selector_exportacion = ttk.Combobox(
+        frame_exportar,
+        textvariable=formato_exportacion,
+        values=["Excel", "PDF"],
+        state="readonly",
+        width=10
+    )
+    selector_exportacion.pack(side="left", padx=5)
+
+    boton_exportar = tk.Button(
+        frame_exportar,
+        text="Exportar",
+        command=exportar_datos,
+        width=15
+    )
+    boton_exportar.pack(side="left", padx=5)
+
     log = tk.Text(ventana, height=6)
     log.pack(fill="x", padx=20, pady=10)
 
@@ -118,9 +165,30 @@ def iniciar_interfaz():
         show="headings"
     )
 
+    ANCHOS_COLUMNAS = {
+        "tipo_factura": 260,
+        "numero_factura": 110,
+        "fecha_facturacion": 130,
+        "fecha_vencimiento": 130,
+        "razon_social": 480,
+        "cuit": 120,
+        "condicion_iva": 180,
+        "domicilio": 380,
+        "condicion_venta": 260,
+        "periodo": 190,
+        "importe_total": 130,
+        "cae": 170,
+    }
+
     for campo, titulo_columna in COLUMNAS:
         tabla.heading(campo, text=titulo_columna)
-        tabla.column(campo, width=150)
+        tabla.column(
+            campo,
+            width=ANCHOS_COLUMNAS.get(campo, 150),
+            minwidth=100,
+            anchor="w",
+            stretch=False
+        )
 
     scroll_y = ttk.Scrollbar(frame_tabla, orient="vertical", command=tabla.yview)
     scroll_x = ttk.Scrollbar(frame_tabla, orient="horizontal", command=tabla.xview)
