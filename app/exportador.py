@@ -57,7 +57,6 @@ def obtener_datos():
     conn.close()
 
     df = df.rename(columns=COLUMNAS_EXPORTACION)
-    df["Importe total"] = df["Importe total"].apply(formatear_importe)
     return df
 
 
@@ -81,6 +80,18 @@ def exportar_excel():
         for celda in ws[1]:
             celda.font = Font(bold=True)
 
+        col_importe = None
+
+        for idx, celda in enumerate(ws[1], start=1):
+            if celda.value == "Importe total":
+                col_importe = idx
+                break
+
+        if col_importe:
+            for fila in range(2, ws.max_row + 1):
+                celda = ws.cell(row=fila, column=col_importe)
+                celda.number_format = '$ #,##0'
+
         for col in ws.columns:
             letra = get_column_letter(col[0].column)
             max_largo = 0
@@ -94,6 +105,9 @@ def exportar_excel():
 
 def exportar_pdf():
     df = obtener_datos()
+
+    df_pdf = df.copy()
+    df_pdf["Importe total"] = df_pdf["Importe total"].apply(formatear_importe)
 
     ruta = filedialog.asksaveasfilename(
         defaultextension=".pdf",
@@ -133,10 +147,10 @@ def exportar_pdf():
         Spacer(1, 10)
     ]
 
-    encabezados = [Paragraph(str(col), estilo_header) for col in df.columns]
+    encabezados = [Paragraph(str(col), estilo_header) for col in df_pdf.columns]
 
     filas = []
-    for _, fila in df.iterrows():
+    for _, fila in df_pdf.iterrows():
         filas.append([
             Paragraph(str(valor), estilo_celda)
             for valor in fila.values
