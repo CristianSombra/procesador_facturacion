@@ -86,5 +86,15 @@ def guardar_factura(datos):
         conn.close()
 
 
+def limpiar_facturas():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM facturas;")
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
 if __name__ == "__main__":
     crear_tabla()

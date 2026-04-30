@@ -24,6 +24,13 @@ COLUMNAS_EXPORTACION = {
     "cae": "CAE",
 }
 
+def formatear_importe(valor):
+    try:
+        valor = float(valor)
+        return f"$ {valor:,.0f}".replace(",", ".")
+    except:
+        return valor
+
 
 def obtener_datos():
     conn = get_connection()
@@ -49,7 +56,9 @@ def obtener_datos():
     df = pd.read_sql(query, conn)
     conn.close()
 
-    return df.rename(columns=COLUMNAS_EXPORTACION)
+    df = df.rename(columns=COLUMNAS_EXPORTACION)
+    df["Importe total"] = df["Importe total"].apply(formatear_importe)
+    return df
 
 
 def exportar_excel():

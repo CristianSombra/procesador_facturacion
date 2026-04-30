@@ -10,5 +10,9 @@ data/
 exports/
 pdfs/
 
+dist/
+build/
+*.spec
+
 *.db
 *.log

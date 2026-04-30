@@ -1,10 +1,19 @@
+import sys
+from pathlib import Path
 from tkinterdnd2 import TkinterDnD, DND_FILES
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, PhotoImage
 import threading
 import os
 from main import procesar_archivo
 from exportador import exportar_excel, exportar_pdf
+from database import limpiar_facturas
+
+
+def ruta_recurso(ruta_relativa):
+    if hasattr(sys, "_MEIPASS"):
+        return Path(sys._MEIPASS) / ruta_relativa
+    return Path(ruta_relativa)
 
 
 COLUMNAS = [
@@ -50,6 +59,26 @@ def exportar_datos():
         agregar_log(f"ERROR al exportar: {error}")
         messagebox.showerror("Error", f"No se pudo exportar:\n{error}")
 
+def nuevo_proceso():
+    confirmar = messagebox.askyesno(
+        "Nuevo proceso",
+        "Se borrarán datos cargados, tabla visual y registros guardados.\n\n¿Continuar?"
+    )
+
+    if not confirmar:
+        return
+
+    for item in tabla.get_children():
+        tabla.delete(item)
+
+    log.delete("1.0", "end")
+
+    limpiar_facturas()
+
+    estado.config(text="Esperando archivos...")
+    agregar_log("Nuevo proceso iniciado.")
+
+
 
 def procesar_archivos_en_segundo_plano(archivos):
     ventana.after(0, lambda: estado.config(text="Procesando archivos..."))
@@ -91,12 +120,19 @@ def iniciar_interfaz():
     global ventana, tabla, log, estado, formato_exportacion
 
     ventana = TkinterDnD.Tk()
-    ventana.title("Procesador de Facturación PDF")
+    ventana.title("Procesador de Facturación")
     ventana.geometry("1300x750")
+
+    logo_img_original = PhotoImage(file=ruta_recurso("assets/logo_camsa.png"))
+    logo_img = logo_img_original.subsample(3, 3)
+    
+    logo_label = tk.Label(ventana, image=logo_img, bd=0)
+    logo_label.image = logo_img
+    logo_label.pack(pady=5)
 
     titulo = tk.Label(
         ventana,
-        text="Procesador de Facturación PDF",
+        text="Procesador de Facturación",
         font=("Arial", 18, "bold")
     )
     titulo.pack(pady=15)
@@ -150,6 +186,14 @@ def iniciar_interfaz():
         width=15
     )
     boton_exportar.pack(side="left", padx=5)
+
+    boton_nuevo = tk.Button(
+    frame_exportar,
+    text="Nuevo proceso",
+    command=nuevo_proceso,
+    width=15
+)
+    boton_nuevo.pack(side="left", padx=5)
 
     log = tk.Text(ventana, height=6)
     log.pack(fill="x", padx=20, pady=10)
