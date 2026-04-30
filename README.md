@@ -2,34 +2,24 @@
 
 Aplicación de escritorio desarrollada en Python para procesar facturas en PDF, extraer información automáticamente y exportarla en formatos utilizables para administración y contabilidad.
 
+---
+
 ## Objetivo
 
 Reducir tiempo operativo de carga manual de comprobantes, automatizando la lectura de PDFs y generando bases listas para la contadora.
 
-app/
-  ui.py
-  main.py
-  extractor.py
-  database.py
-  exportador.py
-  settings.py
-
-assets/
-config/
-pdfs/
-
 ---
 
-# Funcionalidades principales
+## Funcionalidades principales
 
-## Carga de archivos
+### Carga de archivos
 
 - Arrastrar y soltar múltiples PDFs
 - Procesamiento masivo
 - Estado en tiempo real
 - Log de avance por archivo
 
-## Extracción automática de datos
+### Extracción automática de datos
 
 Detecta y guarda:
 
@@ -46,38 +36,38 @@ Detecta y guarda:
 - Importe total
 - CAE
 
-## Interfaz gráfica
+### Interfaz gráfica
 
 - Tabla visual integrada
 - Columnas optimizadas
 - Logo corporativo CAMSA
 - Botón Nuevo Proceso
 
-## Exportación
+### Exportación
 
-### Excel (.xlsx)
+#### Excel (.xlsx)
 
 - Columnas autoajustadas
 - Formato profesional
 - Importes con signo `$`
 
-### PDF
+#### PDF
 
 - Horizontal
 - Multipágina automática
 - Tabla completa lista para impresión
 
-## Limpieza operativa
+### Limpieza operativa
 
 Botón **Nuevo proceso**:
 
-- limpia tabla
-- limpia logs
-- vacía base de datos temporal
+- Limpia tabla
+- Limpia logs
+- Vacía base de datos temporal
 
 ---
 
-# Tecnologías utilizadas
+## Tecnologías utilizadas
 
 - Python 3
 - Tkinter
@@ -91,9 +81,37 @@ Botón **Nuevo proceso**:
 
 ---
 
-# Ejecutable
+## Ejecutable
 
 Versión Windows:
 
+`ProcesadorFacturacion.exe`
+
+No requiere Visual Studio Code para operar.
+
+---
+
+## Estructura del proyecto
+
 ```text
-ProcesadorFacturacion.exe
+procesador_facturacion/
+│── app/
+│   ├── ui.py
+│   ├── main.py
+│   ├── extractor.py
+│   ├── database.py
+│   ├── exportador.py
+│   └── settings.py
+│
+│── assets/
+│   └── logo_camsa.png
+│
+│── config/
+│   └── .env
+│
+│── pdfs/
+│── dist/
+│── build/
+│── README.md
+│── requirements.txt
+│── .gitignore
